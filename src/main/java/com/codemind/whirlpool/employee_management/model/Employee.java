@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,29 +22,44 @@ public class Employee {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "emp_id")
 	private Long empId;
+	
 	@Column(name = "first_name")
 	private String firstName;
+	
 	@Column(name = "middle_name")
 	private String middleName;
+	
 	@Column(name = "last_name")
 	private String lastName;
+	
 	@Column(name = "dob")
 	private LocalDate dob;
+	
 	@Column(name = "gender")
+	@Enumerated(EnumType.STRING)
 	private Gender gender;
+	
 	@Column(name = "faculty")
 	private String faculty;
+	
 	@Column(name = "department")
+	@Enumerated(EnumType.STRING)
 	private Department department;
+	
 	@Column(name = "join_date")
 	private LocalDate joinDate;
+	
 	@Column(name = "email")
 	private String email;
+	
 	@Column(name = "phone_num")
 	private String phoneNumber;
+	
 	@Column(name = "user_name")
 	private String userName;
+	
 	@Column(name = "is_active")
+	@Enumerated(EnumType.STRING)
 	private Status isActive;
 
 	public Employee() {
@@ -79,7 +96,7 @@ public class Employee {
 		this.empId = empId;
 	}
 
-	public long getEmpId() {
+	public Long getEmpId() {
 		return empId;
 	}
 

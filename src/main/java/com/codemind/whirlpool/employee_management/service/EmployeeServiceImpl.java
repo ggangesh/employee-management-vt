@@ -1,6 +1,8 @@
 package com.codemind.whirlpool.employee_management.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.codemind.whirlpool.employee_management.enums.Gender;
 import com.codemind.whirlpool.employee_management.enums.Status;
 import com.codemind.whirlpool.employee_management.model.Employee;
 import com.codemind.whirlpool.employee_management.repository.EmployeeRepository;
+import com.codemind.whirlpool.employee_management.util.EmployeeConverter;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -25,57 +28,36 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
-
-		Employee employee = new Employee();
-		String[] names = extractNames(employeeDto);
-		employee.setFirstName(names[0]);
-		employee.setMiddleName(names[1]);
-		employee.setLastName(names[2]);
-		employee.setDob(employeeDto.getDob());
-		employee.setEmail(employeeDto.getEmail());
-		employee.setDepartment(Department.valueOf(employeeDto.getDepartment()));
-		employee.setFaculty(employeeDto.getFaculty());
-		employee.setGender(Gender.valueOf(employeeDto.getGender()));
-		employee.setJoinDate(employeeDto.getJoinDate());
-		employee.setUserName(employeeDto.getUserName());
-		employee.setPhoneNumber(employeeDto.getPhoneNumber());
-		employee.setIsActive(Status.ACTIVE);
-
+		Employee employee = EmployeeConverter.getEmployeeEntity(employeeDto);
 		Employee savedEmp = employeeRepository.save(employee);
+		EmployeeDto response = EmployeeConverter.getEmployeeDto(savedEmp);
 
-		EmployeeDto response = new EmployeeDto();
-		response.setId(savedEmp.getEmpId());
-		String firstName = savedEmp.getFirstName();
-		String middleName = savedEmp.getMiddleName();
-		String lastName = savedEmp.getLastName();
-		String fullName = firstName.concat(middleName).concat(lastName);
-		response.setName(fullName);
-		response.setDob(savedEmp.getDob());
-		response.setEmail(savedEmp.getEmail());
-		response.setDepartment(savedEmp.getDepartment().name());
-		response.setFaculty(savedEmp.getFaculty());
-		response.setGender(savedEmp.getGender().name());
-		response.setJoinDate(savedEmp.getJoinDate());
-		response.setPhoneNumber(savedEmp.getPhoneNumber());
-		response.setUserName(savedEmp.getUserName());
 		return response;
-	}
-
-	private String[] extractNames(EmployeeDto employeeDto) {
-		String fullName = employeeDto.getName();
-		String[] names = fullName.split(" ");
-		return names;
 	}
 
 	@Override
 	public List<EmployeeDto> getAllEmployees() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Employee> employees = employeeRepository.findAll();
+		List<EmployeeDto> employeeDtos = new ArrayList<>();
+		for (Employee emp : employees) {
+			if ("ACTIVE".equalsIgnoreCase(emp.getIsActive().toString())) {
+				EmployeeDto employeeDto = EmployeeConverter.getEmployeeDto(emp);
+				employeeDtos.add(employeeDto);
+			}
+
+		}
+
+		return employeeDtos;
 	}
 
 	@Override
 	public EmployeeDto getEmployeeById(Long id) {
-		// TODO Auto-generated method stub
+		Optional<Employee> employeeData = employeeRepository.findById(id);
+		if (employeeData.isPresent()) {
+			Employee employee = employeeData.get();
+			EmployeeDto employeeDto = EmployeeConverter.getEmployeeDto(employee);
+			return employeeDto;
+		}
 		return null;
 	}
 
@@ -87,8 +69,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public void deleteEmployeeById(Long id) {
-		// TODO Auto-generated method stub
+		// employeeRepository.deleteById(id); ---> Hard Delete ---> Data is inconsistent
+		// in DB.
 
+		Optional<Employee> employeeData = employeeRepository.findById(id);
+		if (employeeData.isPresent()) {
+			Employee employee = employeeData.get();
+			employee.setIsActive(Status.IN_ACTIVE);
+			employeeRepository.save(employee);
+		} else {
+			throw new RuntimeException("Employee with given Id Does not exists");
+		}
 	}
 
 }

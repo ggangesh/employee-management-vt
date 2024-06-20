@@ -6,7 +6,7 @@ import com.codemind.whirlpool.employee_management.enums.Department;
 
 public class EmployeeDto {
 	private Long id;
-	private String Name;
+	private String name;
 	private LocalDate dob;
 	private String gender;
 	private String faculty;
@@ -25,11 +25,11 @@ public class EmployeeDto {
 	}
 
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	public void setName(String name) {
-		Name = name;
+		this.name = name;
 	}
 
 	public LocalDate getDob() {
