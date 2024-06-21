@@ -16,7 +16,7 @@ public interface EmployeeService {
 	EmployeeDto getEmployeeById(Long id);
 
 	// Update the employee information
-	EmployeeDto updateEmployeeById(Long id);
+	EmployeeDto updateEmployeeById(Long id, EmployeeDto dto);
 
 	// Soft-Delete the Employee Data
 	void deleteEmployeeById(Long id);

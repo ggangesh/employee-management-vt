@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codemind.whirlpool.employee_management.dto.EmployeeDto;
 import com.codemind.whirlpool.employee_management.dto.ParsedName;
 import com.codemind.whirlpool.employee_management.enums.Department;
@@ -12,8 +15,10 @@ import com.codemind.whirlpool.employee_management.enums.Status;
 import com.codemind.whirlpool.employee_management.model.Employee;
 
 public class EmployeeConverter {
+	private static final Logger log = LoggerFactory.getLogger(EmployeeConverter.class);
 
 	public static Employee getEmployeeEntity(EmployeeDto employeeDto) {
+		log.trace("START:EmployeeConverter--->getEmployeeEntity");
 		Employee employee = new Employee();
 		ParsedName names = extractNames(employeeDto);
 		employee.setFirstName(names.getFirstName());
@@ -28,6 +33,7 @@ public class EmployeeConverter {
 		employee.setUserName(employeeDto.getUserName());
 		employee.setPhoneNumber(employeeDto.getPhoneNumber());
 		employee.setIsActive(Status.ACTIVE);
+		log.trace("END:EmployeeConverter--->getEmployeeEntity");
 		return employee;
 	}
 
