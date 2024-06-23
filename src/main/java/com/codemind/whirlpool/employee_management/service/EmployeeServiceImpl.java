@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +20,8 @@ import com.codemind.whirlpool.employee_management.util.EmployeeConverter;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-//	@Autowired
-//	private EmployeeRepository employeeRepository;
+
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	private final EmployeeRepository employeeRepository;
 
@@ -28,10 +31,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
+		log.info("START:EmployeeServiceImpl --->saveEmployee");
+		log.debug("Converting the dto to entity");
 		Employee employee = EmployeeConverter.getEmployeeEntity(employeeDto);
 		Employee savedEmp = employeeRepository.save(employee);
+		log.debug("Converting the entity to dto ");
 		EmployeeDto response = EmployeeConverter.getEmployeeDto(savedEmp);
-
+		log.info("END:EmployeeServiceImpl --->saveEmployee");
 		return response;
 	}
 
@@ -62,12 +68,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public EmployeeDto updateEmployeeById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void deleteEmployeeById(Long id) {
 		// employeeRepository.deleteById(id); ---> Hard Delete ---> Data is inconsistent
 		// in DB.
@@ -79,6 +79,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 			employeeRepository.save(employee);
 		} else {
 			throw new RuntimeException("Employee with given Id Does not exists");
+		}
+	}
+
+	@Override
+	public EmployeeDto updateEmployeeById(Long id, EmployeeDto dto) {
+		// Step 1: Check if this Data already Exists
+		Optional<Employee> employeeData = employeeRepository.findById(id);
+		if (employeeData.isPresent()) {
+			Employee existingEmployeeData = employeeData.get();
+			Employee newEmployeeData = EmployeeConverter.getEmployeeEntity(dto);
+			BeanUtils.copyProperties(newEmployeeData, existingEmployeeData);
+			existingEmployeeData.setEmpId(id);
+			Employee updatedEmpData = employeeRepository.save(existingEmployeeData);
+			return EmployeeConverter.getEmployeeDto(updatedEmpData);
+		} else {
+			Employee newEmployeeData = EmployeeConverter.getEmployeeEntity(dto);
+			Employee savedEmpData = employeeRepository.save(newEmployeeData);
+			return EmployeeConverter.getEmployeeDto(savedEmpData);
 		}
 	}
 
