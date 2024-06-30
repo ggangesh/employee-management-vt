@@ -12,8 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.codemind.whirlpool.employee_management.dto.EmployeeDto;
 import com.codemind.whirlpool.employee_management.enums.Department;
+import com.codemind.whirlpool.employee_management.enums.ErrorCode;
 import com.codemind.whirlpool.employee_management.enums.Gender;
 import com.codemind.whirlpool.employee_management.enums.Status;
+import com.codemind.whirlpool.employee_management.exception.DataNotFoundException;
+import com.codemind.whirlpool.employee_management.exception.ResourceNotFoundException;
 import com.codemind.whirlpool.employee_management.model.Employee;
 import com.codemind.whirlpool.employee_management.repository.EmployeeRepository;
 import com.codemind.whirlpool.employee_management.util.EmployeeConverter;
@@ -63,8 +66,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 			Employee employee = employeeData.get();
 			EmployeeDto employeeDto = EmployeeConverter.getEmployeeDto(employee);
 			return employeeDto;
+		} else {
+			throw new DataNotFoundException(ErrorCode.DATA_NOT_FOUND.getCode(), ErrorCode.DATA_NOT_FOUND.getValue());
 		}
-		return null;
 	}
 
 	@Override
