@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.codemind.whirlpool.employee_management.dto.Comment;
 import com.codemind.whirlpool.employee_management.dto.Post;
+import com.codemind.whirlpool.employee_management.dto.RewardData;
 
 @Service
 public class ApiServiceImpl {
@@ -97,6 +98,24 @@ public class ApiServiceImpl {
 
 		Post data = response.getBody();
 		return data;
+	}
+
+	// F6: PUT
+	public void getE9(int id, Post post) {
+		String url = "https://jsonplaceholder.typicode.com/posts/{id}";
+		restTemplate.put(url, post, id); // ctrl+Shift+I
+	}
+
+	// F1
+	public RewardData getCradDetails(long categoryid) {
+		String url = "https://rewards-credit-card-api.p.rapidapi.com/creditcard-spendbonuscategory-categorycard/{categoryid}";
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("x-rapidapi-key", "a6508c2578msh284e3f5590d3e50p1c2189jsn006e00f393cf");
+		headers.set("x-rapidapi-host", "rewards-credit-card-api.p.rapidapi.com");
+		HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+		ResponseEntity<RewardData> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, RewardData.class,
+				categoryid);
+		return response.getBody();
 	}
 
 }
