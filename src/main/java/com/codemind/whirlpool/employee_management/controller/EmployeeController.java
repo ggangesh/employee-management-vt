@@ -32,7 +32,7 @@ public class EmployeeController {
 	@PostMapping("/save")
 	public ResponseEntity<EmployeeDto> saveEmployeeData(@RequestBody EmployeeDto employeeDto) {
 		log.info("START:EmployeeController--->saveEmployeeData");
-		log.debug("New Request recied for employee : {}",employeeDto.getName());
+		log.debug("New Request recied for employee : {}", employeeDto.getName());
 		EmployeeDto response = employeeService.saveEmployee(employeeDto);
 		log.info("END:EmployeeController--->saveEmployeeData");
 		return new ResponseEntity<EmployeeDto>(response, HttpStatus.CREATED);
@@ -59,13 +59,8 @@ public class EmployeeController {
 
 	@DeleteMapping("/{req-id}")
 	public ResponseEntity<String> deleteEmployeeData(@PathVariable(name = "req-id") Long id) {
-		try {
-			employeeService.deleteEmployeeById(id);
-			return new ResponseEntity<String>("Data Deleted for id : " + id, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<String>("Data not Deleted for id : " + id, HttpStatus.NOT_FOUND);
-		}
+		employeeService.deleteEmployeeById(id);
+		return new ResponseEntity<String>("Data Deleted for id : " + id, HttpStatus.OK);
 	}
 
 }
