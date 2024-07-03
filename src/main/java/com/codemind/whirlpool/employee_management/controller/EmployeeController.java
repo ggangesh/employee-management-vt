@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codemind.whirlpool.employee_management.dto.EmployeeDto;
 import com.codemind.whirlpool.employee_management.service.EmployeeService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @RestController
 @RequestMapping("/emp")
 public class EmployeeController {
@@ -39,6 +43,9 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/{req-id}")
+	@Operation(description = "This API is to get the given id employee data")
+	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Successfull Opeartion"),
+			@ApiResponse(responseCode = "400", description = "Data is not present") })
 	public ResponseEntity<EmployeeDto> fetchEmployeeById(@PathVariable(name = "req-id") Long id) {
 		EmployeeDto response = employeeService.getEmployeeById(id);
 		return new ResponseEntity<EmployeeDto>(response, HttpStatus.OK);
